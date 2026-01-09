@@ -96,6 +96,24 @@
               autocomplete="off"
               required
             />
+            <!-- Bot Picker Dropdown -->
+            <div id="bot-picker" class="bot-picker" style="display: none">
+              <div class="bot-option" data-bot="PWTeacher">
+                <span class="bot-icon">📚</span>
+                <span class="bot-name">@PWTeacher</span>
+                <span class="bot-desc">Sarcastic JEE teacher</span>
+              </div>
+              <div class="bot-option" data-bot="Comedian">
+                <span class="bot-icon">🎭</span>
+                <span class="bot-name">@Comedian</span>
+                <span class="bot-desc">Stand-up comedian</span>
+              </div>
+              <div class="bot-option" data-bot="Motivator">
+                <span class="bot-icon">💪</span>
+                <span class="bot-name">@Motivator</span>
+                <span class="bot-desc">Inspirational coach</span>
+              </div>
+            </div>
             <button type="submit" class="send-btn">
               <i class="fa-solid fa-arrow-up"></i>
             </button>
@@ -105,7 +123,7 @@
       </main>
     </div>
 
-    <script src="https://chat-application-btb2.onrender.com/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.min.js"></script>
     <script src="client.js"></script>
   </body>
 </html>

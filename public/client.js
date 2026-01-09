@@ -1,3 +1,9 @@
+// Production Render URL
+if (typeof io === "undefined") {
+  console.error("Socket.io library not loaded!");
+  alert("Error: Socket.io library failed to load. Please refresh the page.");
+  throw new Error("Socket.io missing");
+}
 const socket = io("https://chat-application-btb2.onrender.com");
 
 // ========================
@@ -18,6 +24,7 @@ const cancelReplyBtn = document.getElementById("cancel-reply");
 const menuBtn = document.getElementById("menu-btn");
 const sidebar = document.querySelector(".sidebar");
 const overlay = document.getElementById("overlay");
+const botPicker = document.getElementById("bot-picker");
 
 // Mobile Sidebar Toggle
 if (menuBtn) {
@@ -143,6 +150,7 @@ cancelReplyBtn.addEventListener("click", cancelReply);
 // 5. TYPING INDICATOR
 // ========================
 msgInput.addEventListener("input", () => {
+  // Typing indicator logic
   if (!isTyping) {
     isTyping = true;
     socket.emit("typing", { room: currentRoom, username: currentUser });
@@ -152,7 +160,51 @@ msgInput.addEventListener("input", () => {
     isTyping = false;
     socket.emit("stopTyping", { room: currentRoom, username: currentUser });
   }, 3000);
+
+  // Bot picker: Show when typing @
+  const text = msgInput.value;
+  const lastAtIndex = text.lastIndexOf("@");
+
+  if (lastAtIndex !== -1) {
+    // Check if @ is at the end or followed by partial bot name
+    const afterAt = text.slice(lastAtIndex + 1).toLowerCase();
+    const botNames = ["pwteacher", "comedian", "motivator"];
+    const isTypingBotName =
+      afterAt === "" || botNames.some((name) => name.startsWith(afterAt));
+
+    console.log(
+      `[DEBUG] @ detected. afterAt: "${afterAt}", match: ${isTypingBotName}`
+    );
+
+    if (isTypingBotName && botPicker) {
+      botPicker.style.display = "block";
+    } else if (botPicker) {
+      botPicker.style.display = "none";
+    }
+  } else if (botPicker) {
+    botPicker.style.display = "none";
+  }
 });
+
+// Bot Picker Click Handler
+if (botPicker) {
+  botPicker.addEventListener("click", (e) => {
+    const option = e.target.closest(".bot-option");
+    if (option) {
+      const botName = option.dataset.bot;
+      // Replace @partial with @BotName
+      const text = msgInput.value;
+      const lastAtIndex = text.lastIndexOf("@");
+      if (lastAtIndex !== -1) {
+        msgInput.value = text.slice(0, lastAtIndex) + "@" + botName + " ";
+      } else {
+        msgInput.value += "@" + botName + " ";
+      }
+      botPicker.style.display = "none";
+      msgInput.focus();
+    }
+  });
+}
 
 let typingUsers = new Set();
 
