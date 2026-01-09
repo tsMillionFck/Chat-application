@@ -15,6 +15,24 @@ const replyPreview = document.getElementById("reply-preview");
 const replyToUsername = document.getElementById("reply-to-username");
 const replyToText = document.getElementById("reply-to-text");
 const cancelReplyBtn = document.getElementById("cancel-reply");
+const menuBtn = document.getElementById("menu-btn");
+const sidebar = document.querySelector(".sidebar");
+const overlay = document.getElementById("overlay");
+
+// Mobile Sidebar Toggle
+if (menuBtn) {
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+  });
+}
+
+if (overlay) {
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+}
 
 // ========================
 // STATE
