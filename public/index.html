@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mio Message</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="join-screen" class="modal-overlay">
+      <div class="glass-card">
+        <div class="logo-area">
+          <i class="fa-solid fa-comment-dots"></i>
+          <h1>Mio Message</h1>
+        </div>
+        <form id="join-form">
+          <div class="input-group">
+            <label>Username</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Tony Stark"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label>Room Name</label>
+            <select id="room" required>
+              <option value="General">General</option>
+              <option value="Project Phoenix">Project Phoenix</option>
+              <option value="Design">Design Team</option>
+              <option value="Random">Random</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary">Enter Chat</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="chat-container">
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <h2>Online</h2>
+          <span id="user-count" class="user-count">0</span>
+        </header>
+        <!-- Live User Roster -->
+        <div id="user-list" class="user-list">
+          <!-- Users will be dynamically added here -->
+        </div>
+      </aside>
+
+      <main class="chat-main">
+        <header class="chat-header">
+          <div class="header-info">
+            <span class="status-dot"></span>
+            <h3 id="room-name">General</h3>
+          </div>
+        </header>
+
+        <div id="chat-messages" class="messages-area"></div>
+
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="typing-indicator"></div>
+
+        <div class="chat-input-area">
+          <!-- Reply Preview Bar -->
+          <div id="reply-preview" class="reply-preview" style="display: none">
+            <div class="reply-preview-content">
+              <span class="reply-label">REPLYING TO</span>
+              <span id="reply-to-username" class="reply-username"></span>
+              <span id="reply-to-text" class="reply-text"></span>
+            </div>
+            <button type="button" id="cancel-reply" class="cancel-reply-btn">
+              ✕
+            </button>
+          </div>
+
+          <form id="chat-form">
+            <button type="button" class="attach-btn">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+            <input
+              id="msg"
+              type="text"
+              placeholder="iMessage"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="send-btn">
+              <i class="fa-solid fa-arrow-up"></i>
+            </button>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+  </body>
+</html>
