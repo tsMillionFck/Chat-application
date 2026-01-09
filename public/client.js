@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io("https://chat-application-btb2.onrender.com");
 
 // ========================
 // DOM ELEMENTS
