@@ -11,7 +11,7 @@ const apiKey = process.env.GEMINI_API_KEY;
 let model;
 if (apiKey) {
   const genAI = new GoogleGenerativeAI(apiKey);
-  model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 } else {
   console.warn(
     "WARNING: GEMINI_API_KEY is not set in .env file. Gemini features will not work."
@@ -48,6 +48,13 @@ const io = new Server(server, {
 
 // Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
+
+// Endpoint to provide public config to client
+app.get("/config", (req, res) => {
+  res.json({
+    socketUrl: process.env.SOCKET_URL || "http://localhost:3000",
+  });
+});
 
 // ========================
 // STATE MANAGEMENT
@@ -150,6 +157,19 @@ io.on("connection", (socket) => {
     // Check for @BotName pattern
     const mentionMatch = msg.match(/@(PWTeacher|Comedian|Motivator)/i);
 
+    if (mentionMatch) {
+      console.log(`[DEBUG] Bot mention detected: ${mentionMatch[1]}`);
+      if (model) {
+        console.log(
+          `[DEBUG] Model is initialized. Generating content for ${mentionMatch[1]}...`
+        );
+      } else {
+        console.warn(
+          `[WARN] Bot mention detected but 'model' is not initialized.`
+        );
+      }
+    }
+
     if (mentionMatch && model) {
       const botKey = mentionMatch[1];
       // Find the matching persona (case-insensitive)
@@ -163,16 +183,34 @@ io.on("connection", (socket) => {
         (async () => {
           try {
             // Signal Bot Typing
-            socket.to(room).emit("userTyping", { username: persona.name });
+            io.to(room).emit("userTyping", { username: persona.name });
 
             const userMessage = msg.replace(/@\w+/g, "").trim(); // Remove @mention from prompt
             const prompt = persona.prompt + userMessage;
+
+            console.log(
+              `[DEBUG] Sending prompt to Gemini: "${prompt.substring(
+                0,
+                100
+              )}..."`
+            );
+            const startTime = Date.now();
+
             const result = await model.generateContent(prompt);
+
+            console.log(
+              `[DEBUG] Gemini API call completed in ${Date.now() - startTime}ms`
+            );
+
             const response = await result.response;
             const text = response.text();
 
+            console.log(
+              `[DEBUG] Gemini response text: "${text.substring(0, 50)}..."`
+            );
+
             // Stop Bot Typing
-            socket.to(room).emit("userStopTyping", { username: persona.name });
+            io.to(room).emit("userStopTyping", { username: persona.name });
 
             // Create bot message
             const botMessage = formatMessage(persona.name, text);
@@ -187,7 +225,9 @@ io.on("connection", (socket) => {
             }
 
             // Emit to room
+            // Emit to room
             io.to(room).emit("message", botMessage);
+            console.log(`[DEBUG] Gemini response sent for ${persona.name}`);
           } catch (error) {
             console.error("Gemini Bot Error:", error);
             // Ensure typing stops even on error

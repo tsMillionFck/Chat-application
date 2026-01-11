@@ -4,11 +4,33 @@ if (typeof io === "undefined") {
   alert("Error: Socket.io library failed to load. Please refresh the page.");
   throw new Error("Socket.io missing");
 }
-const socket = io("https://chat-application-btb2.onrender.com");
+// Initialize socket variable
+let socket;
 
-// ========================
-// DOM ELEMENTS
-// ========================
+// Fetch config and connect
+(async () => {
+  try {
+    const response = await fetch("/config");
+    const config = await response.json();
+    const SOCKET_URL = config.socketUrl;
+    console.log("[DEBUG] Connecting to socket at:", SOCKET_URL);
+    
+    socket = io(SOCKET_URL);
+    initializeSocketEvents();
+  } catch (error) {
+    console.error("Failed to load config:", error);
+    // Fallback if fetch fails
+    socket = io("http://localhost:3000");
+    initializeSocketEvents();
+  }
+})();
+
+function initializeSocketEvents() {
+  if (!socket) return;
+  
+  // ========================
+  // DOM ELEMENTS
+  // ========================
 const joinScreen = document.getElementById("join-screen");
 const joinForm = document.getElementById("join-form");
 const chatMessages = document.getElementById("chat-messages");
@@ -173,7 +195,7 @@ msgInput.addEventListener("input", () => {
       afterAt === "" || botNames.some((name) => name.startsWith(afterAt));
 
     console.log(
-      `[DEBUG] @ detected. afterAt: "${afterAt}", match: ${isTypingBotName}`
+      `[DEBUG-UI] Bot Picker: afterAt: "${afterAt}", match: ${isTypingBotName}`
     );
 
     if (isTypingBotName && botPicker) {
@@ -209,11 +231,13 @@ if (botPicker) {
 let typingUsers = new Set();
 
 socket.on("userTyping", ({ username }) => {
+  console.log(`[DEBUG-UI] Typing event received from: ${username}`);
   typingUsers.add(username);
   updateTypingIndicator();
 });
 
 socket.on("userStopTyping", ({ username }) => {
+  console.log(`[DEBUG-UI] Stop typing event received from: ${username}`);
   typingUsers.delete(username);
   updateTypingIndicator();
 });
@@ -397,4 +421,5 @@ function scrollToMessage(messageId) {
     targetMessage.classList.add("highlight");
     setTimeout(() => targetMessage.classList.remove("highlight"), 2000);
   }
+}
 }
