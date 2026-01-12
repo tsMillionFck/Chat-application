@@ -1,0 +1,104 @@
+/* ========================================
+   ONBOARDING TOUR - Neo-Brutalist Design
+   ======================================== */
+
+.tour-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.tour-highlight {
+  position: absolute;
+  border: 4px solid var(--accent-yellow);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7), 8px 8px 0px #000;
+  z-index: 2001;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tour-card {
+  position: fixed;
+  background: white;
+  border: 3px solid #000;
+  box-shadow: 8px 8px 0px #000;
+  padding: 1.5rem;
+  z-index: 2002;
+  width: 320px;
+  pointer-events: auto;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tour-card h4 {
+  text-transform: uppercase;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+.tour-card p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.tour-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tour-steps {
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.tour-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.tour-btn {
+  padding: 6px 12px;
+  border: 2px solid #000;
+  font-family: inherit;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  cursor: pointer;
+  background: white;
+  box-shadow: 3px 3px 0px #000;
+  transition: all 0.1s;
+}
+
+.tour-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000;
+}
+
+.tour-btn.next {
+  background: var(--accent-yellow);
+}
+
+.tour-btn.skip {
+  background: #eee;
+}
+
+@media (max-width: 768px) {
+  .tour-card {
+    width: 280px;
+    padding: 1rem;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+}
